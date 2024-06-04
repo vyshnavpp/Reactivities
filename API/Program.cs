@@ -12,7 +12,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(opt =>{
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.AddCors(opt => {
+    opt.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,7 +29,9 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.UseCors("CorsPolicy");
+
+app.UseAuthorization();
 
 app.MapControllers();
 
